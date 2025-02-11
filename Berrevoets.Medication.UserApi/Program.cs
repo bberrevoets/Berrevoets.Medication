@@ -1,4 +1,5 @@
 using System.Text;
+using Berrevoets.Medication.UserApi;
 using Berrevoets.Medication.UserApi.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -28,7 +29,8 @@ builder.Services.AddAuthentication(options =>
             ValidIssuer = builder.Configuration["Jwt:Issuer"],
             ValidAudience = builder.Configuration["Jwt:Audience"],
             IssuerSigningKey =
-                new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? "YourSuperSecretKeyThatIsAtLeast32CharsLong"))
+                new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ??
+                                                                "YourSuperSecretKeyThatIsAtLeast32CharsLong"))
         };
     });
 
@@ -46,6 +48,9 @@ if (app.Environment.IsDevelopment())
     {
         var context = scope.ServiceProvider.GetRequiredService<UserDbContext>();
         context.Database.EnsureCreated();
+
+        // Seed the database
+        SeedData.Initialize(app.Services);
     }
 
     app.MapOpenApi();
