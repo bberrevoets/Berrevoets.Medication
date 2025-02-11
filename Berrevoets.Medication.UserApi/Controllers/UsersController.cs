@@ -1,14 +1,16 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+
+using Berrevoets.Medication.UserApi.Controllers.Requests;
 using Berrevoets.Medication.UserApi.Data;
 using Berrevoets.Medication.UserApi.Models;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames;
 
 namespace Berrevoets.Medication.UserApi.Controllers;
 
@@ -31,14 +33,21 @@ public class UsersController : ControllerBase
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterRequest request)
     {
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+
         // Check if the username is already taken
-        var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Username == request.Username);
+        var existingUser =
+            await _context.Users.FirstOrDefaultAsync(u => u.Username == request.Username || u.Email == request.Email);
         if (existingUser != null) return BadRequest("User already exists");
 
         // Create new user and hash the password
         var user = new User
         {
-            Username = request.Username
+            Username = request.Username,
+            Email = request.Email,
+            PhoneNumber = request.PhoneNumber,
+            CreatedDate = DateTime.UtcNow,
+            LastUpdateDate = DateTime.UtcNow
         };
 
         user.PasswordHash = _passwordHasher.HashPassword(user, request.Password);
@@ -81,7 +90,8 @@ public class UsersController : ControllerBase
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
         if (user == null) return Unauthorized();
 
-        return Ok(new { user.Username, user.Role });
+        return Ok(new
+            { user.Username, user.Email, user.PhoneNumber, user.CreatedDate, user.LastUpdateDate, user.Role });
     }
 
     private string GenerateJwtToken(User user)
@@ -108,18 +118,4 @@ public class UsersController : ControllerBase
 
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
-}
-
-public class RegisterRequest
-{
-    public string Username { get; set; } = string.Empty;
-
-    public string Password { get; set; } = string.Empty;
-    // Additional properties (e.g., email, full name, etc.)
-}
-
-public class LoginRequest
-{
-    public string Username { get; set; } = string.Empty;
-    public string Password { get; set; } = string.Empty;
 }

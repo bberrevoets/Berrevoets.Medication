@@ -22,6 +22,7 @@ public static class SeedData
         var adminUser = new User
         {
             Username = "Admin",
+            Email = "admin@example.com",
             Role = "Admin"
         };
         adminUser.PasswordHash = passwordHasher.HashPassword(adminUser, "Admin");
