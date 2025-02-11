@@ -1,0 +1,25 @@
+@Berrevoets.Medication.UserApi_HostAddress = https://localhost:7192
+
+POST {{Berrevoets.Medication.UserApi_HostAddress}}/api/users/login
+Content-Type: application/json
+
+{
+  "Username":"bberrevoets",
+  "Password":"VerySecurePassword"
+}
+
+###
+
+GET {{Berrevoets.Medication.UserApi_HostAddress}}/api/users/profile
+
+###
+
+POST {{Berrevoets.Medication.UserApi_HostAddress}}/api/users/register
+Content-Type: application/json
+
+{
+  "Username":"bberrevoets",
+  "Password":"VerySecurePassword"
+}
+
+###
