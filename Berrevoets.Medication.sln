@@ -16,6 +16,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Berrevoets.Medication.Medic
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MicroServices", "MicroServices", "{9E1D3BB0-C2C6-4BA8-B2BC-60C23617C1E6}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Frontends", "Frontends", "{EDF3A60F-2F68-4D3E-A7EE-93D7B36AB107}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Berrevoets.Medication.BlazorWebApp", "Berrevoets.Medication.BlazorWebApp\Berrevoets.Medication.BlazorWebApp.csproj", "{A7BF630D-C442-4EAF-A3B4-A8011ABDE8C2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,6 +46,10 @@ Global
 		{927A5698-457C-4457-B465-31B881CBA31B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{927A5698-457C-4457-B465-31B881CBA31B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{927A5698-457C-4457-B465-31B881CBA31B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A7BF630D-C442-4EAF-A3B4-A8011ABDE8C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A7BF630D-C442-4EAF-A3B4-A8011ABDE8C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A7BF630D-C442-4EAF-A3B4-A8011ABDE8C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A7BF630D-C442-4EAF-A3B4-A8011ABDE8C2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -52,5 +60,6 @@ Global
 		{1D3CEC05-6AF1-4DC5-A421-846017913B41} = {9E1D3BB0-C2C6-4BA8-B2BC-60C23617C1E6}
 		{4F89291E-C551-4215-951A-51292FC30270} = {9E1D3BB0-C2C6-4BA8-B2BC-60C23617C1E6}
 		{927A5698-457C-4457-B465-31B881CBA31B} = {9E1D3BB0-C2C6-4BA8-B2BC-60C23617C1E6}
+		{A7BF630D-C442-4EAF-A3B4-A8011ABDE8C2} = {EDF3A60F-2F68-4D3E-A7EE-93D7B36AB107}
 	EndGlobalSection
 EndGlobal

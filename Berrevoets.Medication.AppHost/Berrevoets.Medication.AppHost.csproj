@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Berrevoets.Medication.BlazorWebApp\Berrevoets.Medication.BlazorWebApp.csproj" />
     <ProjectReference Include="..\Berrevoets.Medication.MedicineCatalog\Berrevoets.Medication.MedicineCatalog.csproj" />
     <ProjectReference Include="..\Berrevoets.Medication.MedicineUses\Berrevoets.Medication.MedicineUses.csproj" />
     <ProjectReference Include="..\Berrevoets.Medication.UserApi\Berrevoets.Medication.UserApi.csproj" />

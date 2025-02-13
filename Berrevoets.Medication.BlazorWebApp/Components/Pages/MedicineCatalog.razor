@@ -1,0 +1,85 @@
+﻿@page "/catalog"
+@using System.Net.Http.Headers
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@inject NavigationManager Navigation
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IHttpClientFactory HttpClientFactory
+
+@attribute [Authorize]
+
+<h3>Medicine Catalog</h3>
+
+@if (_medicines == null)
+{
+    <p>Loading catalog...</p>
+}
+else if (_medicines == null || !_medicines.Any())
+{
+    <p>No medicines available.</p>
+}
+else
+{
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        @foreach (var med in _medicines)
+        {
+            <div class="col">
+                <div class="card h-100 custom-card">
+                    <div class="card-body">
+                        <h5 class="card-title">@med.Name</h5>
+                        <p class="card-text">@med.Description</p>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            <strong>Manufacturer:</strong> @med.Manufacturer
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Stock:</strong> @med.Stock
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@code {
+    private List<MedicineCatalogItem>? _medicines;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Check if the user is authenticated.
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        if (!user.Identity?.IsAuthenticated == true)
+        {
+            // Redirect to the login page if not authenticated.
+            Navigation.NavigateTo("/login", true);
+            return;
+        }
+
+        var client = HttpClientFactory.CreateClient("MedicineCatalogApi");
+
+        // Assuming the token claim is available if the user is authenticated
+        var token = user.FindFirst("jti")?.Value; // adjust if you store the token differently
+
+        // If you stored the token in the provider, you might expose it via a service method
+        // For this example, assume the token is retrieved and set in the Authorization header
+        if (!string.IsNullOrEmpty(token))
+        {
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        }
+
+        _medicines = await client.GetFromJsonAsync<List<MedicineCatalogItem>>("api/medicines");
+    }
+
+    public class MedicineCatalogItem
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = "";
+        public string? Description { get; set; }
+        public string? Manufacturer { get; set; }
+        public int Stock { get; set; }
+    }
+
+}

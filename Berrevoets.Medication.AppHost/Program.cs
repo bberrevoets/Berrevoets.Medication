@@ -12,16 +12,22 @@ var medicineCatalog = sqlServer.AddDatabase("medicineCatalog");
 
 var medicineUses = sqlServer.AddDatabase("medicineUses");
 
-builder.AddProject<Berrevoets_Medication_UserApi>("berrevoets-medication-userapi")
+var userApi = builder.AddProject<Berrevoets_Medication_UserApi>("berrevoets-medication-userapi")
     .WithReference(userApiDb)
     .WaitFor(userApiDb);
 
-builder.AddProject<Berrevoets_Medication_MedicineCatalog>("berrevoets-medication-medicinecatalog")
+var medicineCatalogApi = builder.AddProject<Berrevoets_Medication_MedicineCatalog>("berrevoets-medication-medicinecatalog")
     .WithReference(medicineCatalog)
     .WaitFor(medicineCatalog);
 
-builder.AddProject<Projects.Berrevoets_Medication_MedicineUses>("berrevoets-medication-medicineuses")
+var medicineUsesApi = builder.AddProject<Projects.Berrevoets_Medication_MedicineUses>("berrevoets-medication-medicineuses")
     .WithReference(medicineUses)
     .WaitFor(medicineUses);
+
+builder.AddProject<Projects.Berrevoets_Medication_BlazorWebApp>("berrevoets-medication-blazorwebapp")
+    .WithReference(medicineCatalogApi)
+    .WithReference(userApi)
+    .WaitFor(medicineCatalogApi)
+    .WaitFor(userApi);
 
 builder.Build().Run();
