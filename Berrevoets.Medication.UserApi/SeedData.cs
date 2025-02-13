@@ -1,4 +1,5 @@
-﻿using Berrevoets.Medication.UserApi.Data;
+﻿using Berrevoets.Medication.ServiceDefaults.Models;
+using Berrevoets.Medication.UserApi.Data;
 using Berrevoets.Medication.UserApi.Models;
 using Microsoft.AspNetCore.Identity;
 
@@ -23,7 +24,7 @@ public static class SeedData
         {
             Username = "Admin",
             Email = "admin@example.com",
-            Role = "Admin"
+            Role = UserRole.Admin.ToString()
         };
         adminUser.PasswordHash = passwordHasher.HashPassword(adminUser, "Admin");
 

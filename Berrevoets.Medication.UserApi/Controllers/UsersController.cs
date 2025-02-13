@@ -104,7 +104,7 @@ public class UsersController : ControllerBase
         {
             new Claim(JwtRegisteredClaimNames.Sub, user.Username),
             new Claim("id", user.Id.ToString()),
-            new Claim(ClaimTypes.Role, user.Role),
+            new Claim(ClaimTypes.Role, user.Role.ToString()),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
 

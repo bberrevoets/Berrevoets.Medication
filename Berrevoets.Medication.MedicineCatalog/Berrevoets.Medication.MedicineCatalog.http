@@ -1,0 +1,6 @@
+@Berrevoets.Medication.MedicineCatalog_HostAddress = http://localhost:5087
+
+GET {{Berrevoets.Medication.MedicineCatalog_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

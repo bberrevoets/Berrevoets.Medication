@@ -1,16 +1,14 @@
 using System.Text;
-using Berrevoets.Medication.UserApi;
-using Berrevoets.Medication.UserApi.Data;
+using Berrevoets.Medication.MedicineUses.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services from ServiceDefaults
 builder.AddServiceDefaults();
 
-builder.AddSqlServerDbContext<UserDbContext>("sqlUserDb");
+builder.AddSqlServerDbContext<MedicineUsesDbContext>("medicineUses");
 
 builder.Services.AddControllers();
 
@@ -29,9 +27,9 @@ builder.Services.AddAuthentication(options =>
             ValidateIssuerSigningKey = true,
             ValidIssuer = builder.Configuration["Jwt:Issuer"],
             ValidAudience = builder.Configuration["Jwt:Audience"],
-            IssuerSigningKey =
-                new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ??
-                                                                "YourSuperSecretKeyThatIsAtLeast32CharsLong"))
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ??
+                                       "YourSuperSecretKeyThatIsAtLeast32CharsLong"))
         };
     });
 
@@ -47,11 +45,8 @@ if (app.Environment.IsDevelopment())
 {
     using (var scope = app.Services.CreateScope())
     {
-        var context = scope.ServiceProvider.GetRequiredService<UserDbContext>();
+        var context = scope.ServiceProvider.GetRequiredService<MedicineUsesDbContext>();
         context.Database.EnsureCreated();
-
-        // Seed the database
-        SeedData.Initialize(app.Services);
     }
 
     app.MapOpenApi();
@@ -60,7 +55,6 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
-
 app.UseAuthorization();
 
 app.MapControllers();

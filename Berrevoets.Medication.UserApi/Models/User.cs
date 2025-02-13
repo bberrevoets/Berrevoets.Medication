@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Berrevoets.Medication.ServiceDefaults.Models;
 
 namespace Berrevoets.Medication.UserApi.Models;
 
@@ -14,7 +15,7 @@ public class User
     public string PasswordHash { get; set; } = string.Empty;
 
     // You can also include a role for authorization purposes (default "User")
-    public string Role { get; set; } = "User";
+    public string Role { get; set; } = UserRole.User.ToString();
 
     [Required]
     [EmailAddress]
