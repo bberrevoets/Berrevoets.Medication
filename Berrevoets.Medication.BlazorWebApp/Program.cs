@@ -14,7 +14,7 @@ builder.Services.AddRazorComponents()
 builder.Services.AddProtectedLocalStore(new EncryptionService());
 
 builder.Services.AddScoped<AuthenticationStateProvider, JwtAuthenticationStateProvider>();
-builder.Services.AddScoped<JwtAuthenticationStateProvider>(sp => (JwtAuthenticationStateProvider)sp.GetRequiredService<AuthenticationStateProvider>());
+//builder.Services.AddScoped<JwtAuthenticationStateProvider>(sp => (JwtAuthenticationStateProvider)sp.GetRequiredService<AuthenticationStateProvider>());
 builder.Services.AddScoped<IAuthService, AuthService>();
 
 builder.Services.AddHttpClient("UserApi",
@@ -22,6 +22,9 @@ builder.Services.AddHttpClient("UserApi",
 
 builder.Services.AddHttpClient("MedicineCatalogApi",
     client => { client.BaseAddress = new Uri("https+http://berrevoets-medication-medicinecatalog"); });
+
+builder.Services.AddHttpClient("MedicineUsesApi",
+    client => { client.BaseAddress = new Uri("https+http://berrevoets-medication-medicineuses"); });
 
 var app = builder.Build();
 

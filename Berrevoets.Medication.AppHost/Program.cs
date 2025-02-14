@@ -16,18 +16,21 @@ var userApi = builder.AddProject<Berrevoets_Medication_UserApi>("berrevoets-medi
     .WithReference(userApiDb)
     .WaitFor(userApiDb);
 
-var medicineCatalogApi = builder.AddProject<Berrevoets_Medication_MedicineCatalog>("berrevoets-medication-medicinecatalog")
+var medicineCatalogApi = builder
+    .AddProject<Berrevoets_Medication_MedicineCatalog>("berrevoets-medication-medicinecatalog")
     .WithReference(medicineCatalog)
     .WaitFor(medicineCatalog);
 
-var medicineUsesApi = builder.AddProject<Projects.Berrevoets_Medication_MedicineUses>("berrevoets-medication-medicineuses")
+var medicineUsesApi = builder.AddProject<Berrevoets_Medication_MedicineUses>("berrevoets-medication-medicineuses")
     .WithReference(medicineUses)
     .WaitFor(medicineUses);
 
-builder.AddProject<Projects.Berrevoets_Medication_BlazorWebApp>("berrevoets-medication-blazorwebapp")
+builder.AddProject<Berrevoets_Medication_BlazorWebApp>("berrevoets-medication-blazorwebapp")
     .WithReference(medicineCatalogApi)
     .WithReference(userApi)
+    .WithReference(medicineUsesApi)
     .WaitFor(medicineCatalogApi)
-    .WaitFor(userApi);
+    .WaitFor(userApi)
+    .WaitFor(medicineUsesApi);
 
 builder.Build().Run();
