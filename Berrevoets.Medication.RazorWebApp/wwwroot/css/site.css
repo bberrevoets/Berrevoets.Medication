@@ -1,0 +1,39 @@
+/* Custom card style (matches your earlier design) */
+.custom-card {
+    background-color: #1e90ff;
+    border: 1px solid #000;
+    border-top-left-radius: 30px;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.5);
+    color: #fff;
+    transition: transform 0.3s ease;
+}
+
+.custom-card:hover { transform: scale(1.06); }
+
+/* Custom modal styles */
+
+.custom-modal-card {
+    border: 1px solid #000;
+    border-top-left-radius: 30px;
+}
+
+.custom-modal-header {
+    background-color: #1e90ff;
+    border-bottom: 1px solid #000;
+    border-top-left-radius: 30px;
+    color: #fff;
+    padding: 1rem;
+}
+
+.custom-modal-body {
+    background-color: #fff;
+    color: #000;
+    padding: 1rem;
+}
+
+.custom-modal-footer {
+    background-color: #fff;
+    border-top: 1px solid #000;
+    color: #000;
+    padding: 1rem;
+}

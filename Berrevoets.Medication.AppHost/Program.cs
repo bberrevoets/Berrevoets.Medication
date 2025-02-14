@@ -25,7 +25,7 @@ var medicineUsesApi = builder.AddProject<Berrevoets_Medication_MedicineUses>("be
     .WithReference(medicineUses)
     .WaitFor(medicineUses);
 
-builder.AddProject<Berrevoets_Medication_BlazorWebApp>("berrevoets-medication-blazorwebapp")
+builder.AddProject<Projects.Berrevoets_Medication_RazorWebApp>("berrevoets-medication-razorwebapp")
     .WithReference(medicineCatalogApi)
     .WithReference(userApi)
     .WithReference(medicineUsesApi)

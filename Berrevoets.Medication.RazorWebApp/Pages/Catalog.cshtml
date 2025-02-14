@@ -1,0 +1,153 @@
+﻿@page
+@using Microsoft.AspNetCore.Authorization
+@using Newtonsoft.Json
+@model CatalogModel
+@attribute [Authorize]
+@{
+    ViewData["Title"] = "Catalog";
+}
+
+<h3>Medicine Catalog</h3>
+
+<!-- Hidden antiforgery form for AJAX calls -->
+<form id="antiForgeryForm">
+    @Html.AntiForgeryToken()
+</form>
+
+<div class="row row-cols-1 row-cols-md-4 g-4">
+    @foreach (var med in Model.Medicines)
+    {
+        <div class="col" id="medicine-card-@med.Id">
+            <div class="card h-100 custom-card" onclick="openModal(@med.Id)" style="cursor: pointer;">
+                <div class="card-body">
+                    <h5 class="card-title">@med.Name</h5>
+                    <p class="card-text">@med.Description</p>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <strong>Manufacturer:</strong> @med.Manufacturer
+                    </li>
+                    <li class="list-group-item">
+                        <strong>Stock:</strong> @med.Stock
+                    </li>
+                </ul>
+            </div>
+        </div>
+    }
+</div>
+
+<!-- Bootstrap Modal -->
+<div class="modal fade" id="medicineModal" tabindex="-1" aria-labelledby="medicineModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content custom-modal-card">
+            <!-- Blue header with Name and Description -->
+            <div class="modal-header custom-modal-header">
+                <h5 class="modal-title" id="medicineModalLabel"></h5>
+            </div>
+            <!-- White body with manufacturer info -->
+            <div class="modal-body custom-modal-body">
+                <p id="modalDescription"></p>
+                <p>
+                    <strong>Manufacturer:</strong> <span id="modalManufacturer"></span>
+                </p>
+            </div>
+            <!-- White footer with stock and buttons on the same line -->
+            <div class="modal-footer custom-modal-footer d-flex justify-content-between align-items-center">
+                <div>
+                    <strong>Stock:</strong> <span id="modalStock"></span>
+                </div>
+                <div>
+                    <button type="button" class="btn btn-secondary me-2" onclick="closeModal()">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="addToUserList()">Add to own list</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Assign the JWT token from the User claims to a global variable.
+        var jwtToken = '@User.FindFirst("Token")?.Value';
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded",
+            function() {
+                const message = '@TempData["NotificationMessage"]';
+                if (message) {
+                    // We have a notification to show
+                    window.showToast('@TempData["NotificationTitle"]',
+                        message,
+                        '@TempData["NotificationType"]');
+                }
+            });
+    </script>
+
+    <script>
+        // Deserialize the medicine list from the server model into JavaScript.
+        var medicines = @Html.Raw(JsonConvert.SerializeObject(Model.Medicines));
+        var selectedMedicine = null;
+
+        function openModal(id) {
+            selectedMedicine = medicines.find(m => m.Id === id);
+            if (!selectedMedicine) return;
+
+            document.getElementById("medicineModalLabel").textContent = selectedMedicine.Name;
+            document.getElementById("modalDescription").textContent = selectedMedicine.Description;
+            document.getElementById("modalManufacturer").textContent = selectedMedicine.Manufacturer;
+            document.getElementById("modalStock").textContent = selectedMedicine.Stock;
+
+            const modalEl = document.getElementById("medicineModal");
+            const modal = new bootstrap.Modal(modalEl);
+            modal.show();
+        }
+
+        function closeModal() {
+            const modalEl = document.getElementById("medicineModal");
+            const modal = bootstrap.Modal.getInstance(modalEl);
+            if (modal) {
+                modal.hide();
+            }
+        }
+
+        function addToUserList() {
+            if (!selectedMedicine) return;
+            console.log("JWT token: ", jwtToken);
+            const antiForgeryToken = $('#antiForgeryForm input[name="__RequestVerificationToken"]').val();
+            $.ajax({
+                url: '@Url.Page("Catalog", "AddMedicine")',
+                method: 'POST',
+                data: {
+                    medicineCatalogId: selectedMedicine.Id,
+                    medicineName: selectedMedicine.Name
+                },
+                headers: {
+                    'RequestVerificationToken': antiForgeryToken,
+                    'Authorization': 'Bearer ' + jwtToken
+                },
+                success: function(response) {
+                    console.log(response);
+                    if (response.success) {
+                        console.log("Medicine added to your list.");
+                        window.showToast("Success", "Medicine added to your list.", "success");
+                        // Remove the added medicine from the DOM:
+                        $("#medicine-card-" + selectedMedicine.Id).remove();
+                        // Optionally, remove it from the JS array too:
+                        medicines = medicines.filter(m => m.Id !== selectedMedicine.Id);
+                    } else {
+                        console.log("Could not add medicine.");
+                        window.showToast("Error", "Could not add medicine.", "error");
+                    }
+                    closeModal();
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    console.error("AJAX Error:", textStatus, errorThrown);
+                    console.error("Response Text:", jqXHR.responseText);
+                    window.showToast("Error", "Could not add medicine.", "error");
+                    closeModal();
+                }
+            });
+        }
+    </script>
+}

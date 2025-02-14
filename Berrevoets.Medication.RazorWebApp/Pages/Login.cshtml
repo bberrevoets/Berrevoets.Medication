@@ -1,0 +1,32 @@
+﻿@page
+@model Berrevoets.Medication.RazorWebApp.Pages.LoginModel
+@{
+    ViewData["Title"] = "Login";
+}
+
+<h3>Login</h3>
+
+<form method="post">
+    <div class="mb-3">
+        <label for="username" class="form-label">Username</label>
+        <input asp-for="LoginData.Username" class="form-control" id="username" />
+        <span asp-validation-for="LoginData.Username" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label for="password" class="form-label">Password</label>
+        <input asp-for="LoginData.Password" class="form-control" id="password" type="password" />
+        <span asp-validation-for="LoginData.Password" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Login</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            if ('@TempData["NotificationMessage"]' && '@User.Identity?.IsAuthenticated' === 'True') {
+                window.showToast('@TempData["NotificationTitle"]', '@TempData["NotificationMessage"]', '@TempData["NotificationType"]');
+            }
+        });
+    </script>
+}
