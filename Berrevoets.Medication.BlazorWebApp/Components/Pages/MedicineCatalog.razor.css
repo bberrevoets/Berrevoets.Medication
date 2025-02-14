@@ -7,60 +7,67 @@
     border-top-left-radius: 30px;
     /* border-bottom-right-radius: 30px; if desired */
     box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.5);
-    transition: transform 0.3s ease;
     color: #fff; /* White text on the main page card */
+    transition: transform 0.3s ease;
 }
 
-    .custom-card:hover {
-        transform: scale(1.06);
-    }
+.custom-card:hover { transform: scale(1.06); }
 
 /*******************************************/
+
 /* Modal Backdrop                          */
+
 /*******************************************/
+
 .modal-backdrop-custom {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
     background-color: rgba(0, 0, 0, 0.5);
+    height: 100vh;
+    left: 0;
     opacity: 0;
     pointer-events: none;
+    position: fixed;
+    top: 0;
     transition: opacity 0.3s ease;
+    width: 100vw;
     z-index: 1040; /* behind the modal container */
 }
 
-    .modal-backdrop-custom.show {
-        opacity: 1;
-        pointer-events: auto;
-    }
-
-/*******************************************/
-/* Modal Container (Scaled from 0 to 1)    */
-/*******************************************/
-.modal-popover-container {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) scale(0);
-    transition: transform 0.3s ease;
-    z-index: 1050; /* above backdrop */
-    width: 90%;
-    max-width: 600px;
-    pointer-events: none;
-    opacity: 0;
+.modal-backdrop-custom.show {
+    opacity: 1;
+    pointer-events: auto;
 }
 
-    .modal-popover-container.show {
-        transform: translate(-50%, -50%) scale(1);
-        pointer-events: auto;
-        opacity: 1;
-    }
+/*******************************************/
+
+/* Modal Container (Scaled from 0 to 1)    */
 
 /*******************************************/
-/* Modal Card Layout                       */
+
+.modal-popover-container {
+    left: 50%;
+    max-width: 600px;
+    opacity: 0;
+    pointer-events: none;
+    position: fixed;
+    top: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    transition: transform 0.3s ease;
+    width: 90%;
+    z-index: 1050; /* above backdrop */
+}
+
+.modal-popover-container.show {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translate(-50%, -50%) scale(1);
+}
+
 /*******************************************/
+
+/* Modal Card Layout                       */
+
+/*******************************************/
+
 .custom-modal-card {
     border: 1px solid #000;
     border-top-left-radius: 30px;
@@ -71,30 +78,50 @@
 }
 
 /* Blue header with white text */
+
 .custom-modal-header {
     background-color: #1e90ff;
+    border-bottom: 1px solid #000;
     color: #fff;
-    padding: 1rem;
     margin: 0;
-    border-bottom: 1px solid #000; 
+    padding: 1rem;
 }
 
 /* White body with black text */
+
 .custom-modal-body {
     background-color: #fff;
     color: #000;
     padding: 1rem;
 }
 
-    /* Buttons in the body (optional styling) */
-    .custom-modal-body .btn-secondary {
-        background-color: #bbb;
-        border: none;
-        color: #000;
-    }
+/* Buttons in the body (optional styling) */
 
-    .custom-modal-body .btn-primary {
-        background-color: #555;
-        border: none;
-        color: #fff;
-    }
+.custom-modal-body .btn-secondary {
+    background-color: #bbb;
+    border: none;
+    color: #000;
+}
+
+.custom-modal-body .btn-primary {
+    background-color: #555;
+    border: none;
+    color: #fff;
+}
+
+
+/* Example: Default toast style */
+
+.toast { background-color: #f8f9fa; }
+
+/* Additional custom classes can be added if desired */
+
+.toast.success {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.toast.error {
+    background-color: #f8d7da;
+    color: #721c24;
+}

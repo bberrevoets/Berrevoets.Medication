@@ -7,8 +7,21 @@
 @inject NavigationManager Navigation
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject IHttpClientFactory HttpClientFactory
+@inject IJSRuntime JSRuntime
 
 @attribute [Authorize]
+
+<div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1100;">
+    <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <strong class="me-auto" id="toastTitle"></strong>
+            <small>Just now</small>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body" id="toastMessage">
+        </div>
+    </div>
+</div>
 
 <h3>Medicine Catalog</h3>
 
@@ -27,15 +40,19 @@ else
         {
             <div class="col">
                 <div class="card h-100 custom-card"
-                     @onclick="() => OpenModal(med)"
-                     style="cursor:pointer;">
+                @onclick="() => OpenModal(med)"
+                style="cursor: pointer;">
                     <div class="card-body">
                         <h5 class="card-title">@med.Name</h5>
                         <p class="card-text">@med.Description</p>
                     </div>
                     <ul class="list-group list-group-flush">
-                        <li class="list-group-item"><strong>Manufacturer:</strong> @med.Manufacturer</li>
-                        <li class="list-group-item"><strong>Stock:</strong> @med.Stock</li>
+                        <li class="list-group-item">
+                            <strong>Manufacturer:</strong> @med.Manufacturer
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Stock:</strong> @med.Stock
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -44,10 +61,10 @@ else
 }
 
 <!-- Backdrop: always rendered, toggled by "show" -->
-<div class="modal-backdrop-custom @( _showModal ? "show" : "" )"></div>
+<div class="modal-backdrop-custom @(_showModal ? "show" : "")"></div>
 
 <!-- Modal container: always rendered, toggled by "show" -->
-<div class="modal-popover-container @( _showModal ? "show" : "" )">
+<div class="modal-popover-container @(_showModal ? "show" : "")">
     @if (_selectedMedicine is not null)
     {
         <div class="card custom-modal-card">
@@ -59,7 +76,9 @@ else
 
             <!-- WHITE BODY (black text) with manufacturer, stock, and buttons on same line -->
             <div class="custom-modal-body">
-                <p><strong>Manufacturer:</strong> @_selectedMedicine.Manufacturer</p>
+                <p>
+                    <strong>Manufacturer:</strong> @_selectedMedicine.Manufacturer
+                </p>
 
                 <!-- A horizontal line, then stock + buttons on one row -->
                 <div class="border-top pt-2 mt-2 d-flex justify-content-between align-items-center">
@@ -80,7 +99,7 @@ else
     private List<MedicineCatalogItem>? _medicines;
     private bool _loading = true;
     private MedicineCatalogItem? _selectedMedicine;
-    private bool _showModal = false;
+    private bool _showModal;
     private string? token;
     private ClaimsPrincipal? user;
 
@@ -145,9 +164,27 @@ else
             DailyDose = 1,
             StockAtHome = _selectedMedicine.Stock
         };
+        HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.BadRequest);
+        try
+        {
+            response = await clientUses.PostAsJsonAsync("api/medicineuses", body);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
 
-        var response = await clientUses.PostAsJsonAsync("api/medicineuses", body);
-        // Handle success/failure if desired
+        if (response.IsSuccessStatusCode)
+        {
+            // Show a green toast for success
+            await JSRuntime.InvokeVoidAsync("bootstrapToast.show", "liveToast", "Success", "Medicine added to your list.");
+        }
+        else
+        {
+            // Show a red toast for error
+            await JSRuntime.InvokeVoidAsync("bootstrapToast.show", "liveToast", "Error", "Could not add medicine to your list.");
+        }
 
         CloseModal();
     }
@@ -160,4 +197,5 @@ else
         public string? Manufacturer { get; set; }
         public int Stock { get; set; }
     }
+
 }
