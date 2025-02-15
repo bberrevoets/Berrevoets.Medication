@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using Berrevoets.Medication.MedicineUses.Data;
 using Berrevoets.Medication.MedicineUses.Models;
+using Berrevoets.Medication.ServiceDefaults;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -24,9 +25,9 @@ public class MedicineUsesController : ControllerBase
     public async Task<IActionResult> GetMedicineUses()
     {
         // Extract the user identifier from the JWT token (using the NameIdentifier claim)
-        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        if (string.IsNullOrEmpty(userId))
-            return Unauthorized();
+        var claim = User.Claims.FirstOrDefault(c => c.Type == "id");
+        if (claim == null) return Unauthorized();
+        var userId = Guid.Parse(claim.Value);
 
         var uses = await _context.MedicineUses.Where(mu => mu.UserId == userId).ToListAsync();
         return Ok(uses);
@@ -36,9 +37,10 @@ public class MedicineUsesController : ControllerBase
     [HttpGet("{id:int}")]
     public async Task<IActionResult> GetMedicineUse(int id)
     {
-        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        if (string.IsNullOrEmpty(userId))
-            return Unauthorized();
+        // Extract the user identifier from the JWT token (using the NameIdentifier claim)
+        var claim = User.Claims.FirstOrDefault(c => c.Type == "id");
+        if (claim == null) return Unauthorized();
+        var userId = Guid.Parse(claim.Value);
 
         var use = await _context.MedicineUses.FirstOrDefaultAsync(mu => mu.Id == id && mu.UserId == userId);
         if (use == null)
@@ -52,10 +54,11 @@ public class MedicineUsesController : ControllerBase
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
-
-        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        if (string.IsNullOrEmpty(userId))
-            return Unauthorized();
+        
+        // Extract the user identifier from the JWT token (using the NameIdentifier claim)
+        var claim = User.Claims.FirstOrDefault(c => c.Type == "id");
+        if (claim == null) return Unauthorized();
+        var userId = Guid.Parse(claim.Value);
 
         // Ensure the record is tied to the authenticated user
         medicineUse.UserId = userId;
@@ -72,10 +75,11 @@ public class MedicineUsesController : ControllerBase
     {
         if (id != updatedUse.Id)
             return BadRequest("ID mismatch");
-
-        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        if (string.IsNullOrEmpty(userId))
-            return Unauthorized();
+        
+        // Extract the user identifier from the JWT token (using the NameIdentifier claim)
+        var claim = User.Claims.FirstOrDefault(c => c.Type == "id");
+        if (claim == null) return Unauthorized();
+        var userId = Guid.Parse(claim.Value);
 
         var existingUse = await _context.MedicineUses.FirstOrDefaultAsync(mu => mu.Id == id && mu.UserId == userId);
         if (existingUse == null)
@@ -96,9 +100,10 @@ public class MedicineUsesController : ControllerBase
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> DeleteMedicineUse(int id)
     {
-        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        if (string.IsNullOrEmpty(userId))
-            return Unauthorized();
+        // Extract the user identifier from the JWT token (using the NameIdentifier claim)
+        var claim = User.Claims.FirstOrDefault(c => c.Type == "id");
+        if (claim == null) return Unauthorized();
+        var userId = Guid.Parse(claim.Value);
 
         var use = await _context.MedicineUses.FirstOrDefaultAsync(mu => mu.Id == id && mu.UserId == userId);
         if (use == null)

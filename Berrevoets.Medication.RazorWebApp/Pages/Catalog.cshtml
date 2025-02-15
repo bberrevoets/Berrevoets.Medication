@@ -113,8 +113,9 @@
 
         function addToUserList() {
             if (!selectedMedicine) return;
-            console.log("JWT token: ", jwtToken);
             const antiForgeryToken = $('#antiForgeryForm input[name="__RequestVerificationToken"]').val();
+            console.log("JWT token: ", jwtToken);
+            console.log("selectedMedicine: ", selectedMedicine);
             $.ajax({
                 url: '@Url.Page("Catalog", "AddMedicine")',
                 method: 'POST',

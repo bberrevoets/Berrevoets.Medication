@@ -25,7 +25,7 @@ public class CatalogModel : PageModel
 
     public async Task<IActionResult> OnGetAsync()
     {
-        if (!User.Identity.IsAuthenticated) return RedirectToPage("Login");
+        if (!User.Identity!.IsAuthenticated) return RedirectToPage("Login");
 
         // Extract the token from the authenticated user's claims.
         ApiToken = User.FindFirst("Token")?.Value;
@@ -71,21 +71,22 @@ public class CatalogModel : PageModel
 
         var client = _httpClientFactory.CreateClient("MedicineUsesApi");
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", ApiToken);
-        var userId = JwtHelper.GetUserIdFromToken(ApiToken);
-        // Build a request body. In a real application, include more information as needed.
+        var userId = JwtHelper.GetUserId(ApiToken);
+        if (!userId.HasValue) return new JsonResult(new { success = false, message = "User authenticated but has no UserId????" });
+
         var body = new
         {
             MedicineCatalogId = medicineCatalogId,
             MedicineName = medicineName,
-            UserId = userId
+            UserId = userId!.Value
         };
 
         try
         {
             var response = await client.PostAsJsonAsync("api/medicineuses", body);
-            if (response.IsSuccessStatusCode) return new JsonResult(new { success = true });
-
-            return new JsonResult(new { success = false, message = "API call failed." });
+            return response.IsSuccessStatusCode 
+                ? new JsonResult(new { success = true }) 
+                : new JsonResult(new { success = false, message = "API call failed." });
         }
         catch
         {
@@ -103,7 +104,7 @@ public class MedicineUseDto
 
     [Required] public int? MedicineCatalogId { get; set; }
 
-    [Required] public string UserId { get; set; } = string.Empty;
+    [Required] public Guid UserId { get; set; } = Guid.Empty;
 
     public int DailyDose { get; set; }
 

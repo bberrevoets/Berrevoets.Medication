@@ -10,7 +10,7 @@ public class MedicineUse
 
     [Required] public int? MedicineCatalogId { get; set; }
 
-    [Required] public string UserId { get; set; } = string.Empty;
+    [Required] public Guid UserId { get; set; } = Guid.Empty;
 
     public int DailyDose { get; set; }
 

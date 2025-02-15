@@ -22,6 +22,7 @@ public static class SeedData
         // Create the Admin user
         var adminUser = new User
         {
+            Id = Guid.NewGuid(),
             Username = "Admin",
             Email = "admin@example.com",
             Role = UserRole.Admin.ToString()

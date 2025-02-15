@@ -91,7 +91,7 @@ public class UsersController : ControllerBase
         if (user == null) return Unauthorized();
 
         return Ok(new
-            { user.Username, user.Email, user.PhoneNumber, user.CreatedDate, user.LastUpdateDate, user.Role });
+            { user.Id, user.Username, user.Email, user.PhoneNumber, user.CreatedDate, user.LastUpdateDate, user.Role });
     }
 
     private string GenerateJwtToken(User user)

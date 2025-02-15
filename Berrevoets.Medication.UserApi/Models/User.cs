@@ -5,7 +5,7 @@ namespace Berrevoets.Medication.UserApi.Models;
 
 public class User
 {
-    public int Id { get; set; }
+    [Key] public Guid Id { get; set; } = Guid.NewGuid();
 
     [Required]
     [StringLength(50, ErrorMessage = "Username cannot be longer than 50 characters.")]

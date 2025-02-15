@@ -39,7 +39,8 @@ namespace Berrevoets.Medication.RazorWebApp.Pages
                     var claims = new List<Claim>
                     {
                         new Claim(ClaimTypes.Name, LoginData.Username),
-                        new Claim("Token", result.Token)
+                        new Claim("Token", result.Token),
+                        new Claim("id", result.Id)
                     };
 
                     var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -72,5 +73,6 @@ namespace Berrevoets.Medication.RazorWebApp.Pages
     public class LoginResult
     {
         public string Token { get; set; } = "";
+        public string Id { get; set; } = "";
     }
 }

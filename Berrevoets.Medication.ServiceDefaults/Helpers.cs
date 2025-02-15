@@ -1,10 +1,11 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace Berrevoets.Medication.ServiceDefaults;
 
 public static class JwtHelper
 {
-    public static string? GetUserIdFromToken(string jwtToken)
+    public static Guid? GetUserId(string jwtToken)
     {
         if (string.IsNullOrWhiteSpace(jwtToken))
             return null;
@@ -12,6 +13,10 @@ public static class JwtHelper
         var handler = new JwtSecurityTokenHandler();
         var token = handler.ReadJwtToken(jwtToken);
         // Adjust the claim type as needed: "id" or "sub"
-        return token.Claims.FirstOrDefault(c => c.Type is "id" or JwtRegisteredClaimNames.Sub)?.Value;
+        var userId = token.Claims.FirstOrDefault(c => c.Type is "id")?.Value;
+
+        if (Guid.TryParse(userId, out var id)) return id;
+
+        return null;
     }
 }
