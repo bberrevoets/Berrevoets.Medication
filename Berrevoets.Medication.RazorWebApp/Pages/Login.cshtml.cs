@@ -1,3 +1,5 @@
+using Berrevoets.Medication.RazorWebApp.Models;
+
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
@@ -20,6 +22,9 @@ namespace Berrevoets.Medication.RazorWebApp.Pages
 
         [BindProperty]
         public LoginData LoginData { get; set; } = new LoginData();
+
+        [BindProperty(SupportsGet = true)]
+        public string? ReturnUrl { get; set; }
 
         public async Task<IActionResult> OnPostAsync()
         {
@@ -53,6 +58,11 @@ namespace Berrevoets.Medication.RazorWebApp.Pages
                     TempData["NotificationMessage"] = "Logged in successfully.";
                     TempData["NotificationType"] = "success";
 
+                    if (!string.IsNullOrEmpty(ReturnUrl))
+                    {
+                        return Redirect(ReturnUrl);
+                    }
+
                     return RedirectToPage("Index");
                 }
             }
@@ -62,17 +72,5 @@ namespace Berrevoets.Medication.RazorWebApp.Pages
             TempData["NotificationType"] = "error";
             return Page();
         }
-    }
-
-    public class LoginData
-    {
-        public string Username { get; set; } = "";
-        public string Password { get; set; } = "";
-    }
-
-    public class LoginResult
-    {
-        public string Token { get; set; } = "";
-        public string Id { get; set; } = "";
     }
 }

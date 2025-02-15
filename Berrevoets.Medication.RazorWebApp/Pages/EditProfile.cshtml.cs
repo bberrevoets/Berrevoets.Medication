@@ -1,5 +1,9 @@
-using System.ComponentModel.DataAnnotations;
 using System.Net.Http.Headers;
+
+using Berrevoets.Medication.RazorWebApp.Models;
+using Berrevoets.Medication.ServiceDefaults;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -22,7 +26,14 @@ public class EditProfileModel : PageModel
 
     public async Task<IActionResult> OnGetAsync()
     {
-        if (!User.Identity.IsAuthenticated) return RedirectToPage("Login");
+        // Check if the token exists and is valid.
+        if (string.IsNullOrEmpty(ApiToken) || TokenHelper.IsTokenExpired(ApiToken))
+        {
+            // Sign out the user if token expired.
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            // Redirect to login page, optionally passing the returnUrl.
+            return RedirectToPage("Login", new { returnUrl = "/EditProfile" });
+        }
 
         var client = _httpClientFactory.CreateClient("UserApi");
         if (!string.IsNullOrEmpty(ApiToken))
@@ -74,30 +85,4 @@ public class EditProfileModel : PageModel
         TempData["NotificationType"] = "error";
         return Page();
     }
-}
-
-public class ProfileInput
-{
-    [Required]
-    [StringLength(50)]
-    [Display(Name = "Username")]
-    public string Username { get; set; } = "";
-
-    [Required]
-    [EmailAddress]
-    [Display(Name = "Email")]
-    public string Email { get; set; } = "";
-
-    [Display(Name = "Phone Number")] public string? PhoneNumber { get; set; }
-}
-
-public class ProfileResponse
-{
-    public Guid Id { get; set; }
-    public string Username { get; set; } = "";
-    public string Email { get; set; } = "";
-    public string? PhoneNumber { get; set; }
-    public DateTime CreatedDate { get; set; }
-    public DateTime LastUpdateDate { get; set; }
-    public string Role { get; set; } = "";
 }

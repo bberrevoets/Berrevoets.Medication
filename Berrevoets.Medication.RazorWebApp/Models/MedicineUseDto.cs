@@ -1,0 +1,21 @@
+using System.ComponentModel.DataAnnotations;
+
+namespace Berrevoets.Medication.RazorWebApp.Models;
+
+public class MedicineUseDto
+{
+    public int Id { get; set; }
+
+    [Required] [StringLength(100)] public string MedicineName { get; set; } = string.Empty;
+
+    [Required] public int? MedicineCatalogId { get; set; }
+
+    [Required] public Guid UserId { get; set; } = Guid.Empty;
+
+    public int DailyDose { get; set; }
+
+    public int StockAtHome { get; set; }
+
+    public DateTime CreatedDate { get; set; }
+    public DateTime LastUpdateDate { get; set; }
+}

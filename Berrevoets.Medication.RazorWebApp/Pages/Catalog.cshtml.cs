@@ -1,6 +1,9 @@
-using System.ComponentModel.DataAnnotations;
 using System.Net.Http.Headers;
+
+using Berrevoets.Medication.RazorWebApp.Models;
 using Berrevoets.Medication.ServiceDefaults;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -25,7 +28,14 @@ public class CatalogModel : PageModel
 
     public async Task<IActionResult> OnGetAsync()
     {
-        if (!User.Identity!.IsAuthenticated) return RedirectToPage("Login");
+        // Check if the token exists and is valid.
+        if (string.IsNullOrEmpty(ApiToken) || TokenHelper.IsTokenExpired(ApiToken))
+        {
+            // Sign out the user if token expired.
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            // Redirect to login page, optionally passing the returnUrl.
+            return RedirectToPage("Login", new { returnUrl = "/Catalog" });
+        }
 
         // Extract the token from the authenticated user's claims.
         ApiToken = User.FindFirst("Token")?.Value;
@@ -71,7 +81,7 @@ public class CatalogModel : PageModel
 
         var client = _httpClientFactory.CreateClient("MedicineUsesApi");
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", ApiToken);
-        var userId = JwtHelper.GetUserId(ApiToken);
+        var userId = TokenHelper.GetUserId(ApiToken);
         if (!userId.HasValue) return new JsonResult(new { success = false, message = "User authenticated but has no UserId????" });
 
         var body = new
@@ -93,32 +103,4 @@ public class CatalogModel : PageModel
             return new JsonResult(new { success = false, message = "Exception occurred." });
         }
     }
-}
-
-// This DTO should match what the MedicineUses API returns.
-public class MedicineUseDto
-{
-    public int Id { get; set; }
-
-    [Required] [StringLength(100)] public string MedicineName { get; set; } = string.Empty;
-
-    [Required] public int? MedicineCatalogId { get; set; }
-
-    [Required] public Guid UserId { get; set; } = Guid.Empty;
-
-    public int DailyDose { get; set; }
-
-    public int StockAtHome { get; set; }
-
-    public DateTime CreatedDate { get; set; }
-    public DateTime LastUpdateDate { get; set; }
-}
-
-public class MedicineCatalogItem
-{
-    public int Id { get; set; }
-    public string Name { get; set; } = "";
-    public string? Description { get; set; }
-    public string? Manufacturer { get; set; }
-    public int Stock { get; set; }
 }
