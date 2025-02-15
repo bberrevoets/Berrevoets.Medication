@@ -53,7 +53,7 @@ namespace Berrevoets.Medication.RazorWebApp.Pages
                     TempData["NotificationMessage"] = "Logged in successfully.";
                     TempData["NotificationType"] = "success";
 
-                    return RedirectToPage("Catalog");
+                    return RedirectToPage("Index");
                 }
             }
 

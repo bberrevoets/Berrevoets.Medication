@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-bs-theme="light">
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -10,7 +10,7 @@
 </head>
 <body>
 <header>
-    <nav class="navbar navbar-expand-sm navbar-light bg-white border-bottom box-shadow mb-3">
+    <nav class="navbar navbar-expand-sm bg-white border-bottom box-shadow mb-3">
         <div class="container">
             <a class="navbar-brand" asp-area="" asp-page="/Index">Berrevoets.Medication.RazorWebApp</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
@@ -22,19 +22,15 @@
                     <li class="nav-item">
                         <a class="nav-link text-dark" asp-area="" asp-page="/Index">Home</a>
                     </li>
-                    @if (User.Identity is { IsAuthenticated: true })
+                    @if (User.Identity != null && User.Identity.IsAuthenticated)
                     {
                         <li class="nav-item">
-                            <!-- Hidden form for logout POST -->
+                            <!-- Hidden logout form -->
                             <form id="logoutForm" method="post" asp-page="/Logout" class="d-none">
                                 @Html.AntiForgeryToken()
                             </form>
-
-                            <!-- Regular anchor styled like the other nav links -->
-                            <a class="nav-link text-dark" href="#"
-                               onclick="document.getElementById('logoutForm').submit();return false;">
-                                Logout
-                            </a>
+                            <!-- Logout link styled as a nav-link -->
+                            <a class="nav-link text-dark" href="#" onclick="document.getElementById('logoutForm').submit(); return false;">Logout</a>
                         </li>
                     }
                     else
@@ -43,19 +39,49 @@
                             <a class="nav-link text-dark" asp-area="" asp-page="/Login">Login</a>
                         </li>
                     }
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-page="/Catalog">Catalog</a>
-                    </li>
                 </ul>
             </div>
         </div>
     </nav>
 </header>
-<div class="container">
-    <main role="main" class="pb-3">
-        @RenderBody()
-    </main>
-</div>
+@if (User.Identity!.IsAuthenticated)
+{
+    <div class="container-fluid flex-grow-1">
+        <div class="row">
+            <!-- Sidebar -->
+            <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light collapse">
+                <div class="position-sticky pt-3">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-page="/Catalog">
+                                <span data-feather="file"></span>
+                                Catalog
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-page="/EditProfile">
+                                <span data-feather="user"></span>
+                                Edit Profile
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+            <!-- Main content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+}
+else
+{
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+}
 
 <!-- Toast Container -->
 <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1100;">
